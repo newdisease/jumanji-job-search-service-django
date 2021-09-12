@@ -1,5 +1,7 @@
 .idea
 secret_settings.py
+vacancies/management/
+/migrations*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
