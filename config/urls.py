@@ -18,7 +18,7 @@ from django.urls import path, include
 
 import vacancies.urls
 
-urlpatterns = {
+urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(vacancies.urls)),
-}
+]
