@@ -17,8 +17,19 @@ from django.contrib import admin
 from django.urls import path, include
 
 import vacancies.urls
+from config import settings
+from vacancies.views import custom_handler500
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(vacancies.urls)),
 ]
+
+if settings.DEBUG:
+    import debug_toolbar
+
+    urlpatterns = [
+                      path('__debug__/', include(debug_toolbar.urls)),
+                  ] + urlpatterns
+
+handler500 = custom_handler500

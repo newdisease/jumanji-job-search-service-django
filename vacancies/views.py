@@ -1,4 +1,6 @@
 from django.db.models import Count
+from django.http import HttpResponseServerError
+from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView, ListView, DetailView
 
 from vacancies.models import Specialty, Company, Vacancy
@@ -32,12 +34,12 @@ class SelectedVacanciesListView(ListView):
     context_object_name = 'vacancies'
 
     def get_queryset(self):
-        specialty_id = Specialty.objects.get(code=self.args[0]).id
-        return Vacancy.objects.filter(specialty_id=specialty_id)
+        self.specialty_id = get_object_or_404(Specialty, code=self.args[0])
+        return Vacancy.objects.filter(specialty_id=self.specialty_id.id)
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(SelectedVacanciesListView, self).get_context_data(**kwargs)
-        context['page_title'] = Specialty.objects.get(code=self.args[0]).title
+        context['page_title'] = self.specialty_id.title
         return context
 
 
@@ -49,7 +51,7 @@ class VacancyDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(VacancyDetailView, self).get_context_data(**kwargs)
         context['specialties_code'] = Specialty.objects.get(id=self.object.specialty_id).code
-        context['head_title'] = f'Джуманджи | Вакансия | {Vacancy.objects.get(id=self.object.id).title}'
+        context['head_title'] = f'Джуманджи | Вакансия | {self.object.title}'
         return context
 
 
@@ -61,6 +63,10 @@ class CompanyDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(CompanyDetailView, self).get_context_data(**kwargs)
-        context['available_vacancies'] = Vacancy.objects.filter(company=self.object)
-        context['head_title'] = f'Джуманджи | Компания | {Company.objects.get(name=self.object.name).name}'
+        context['available_vacancies'] = Vacancy.objects.filter(company=self.object).select_related('company')
+        context['head_title'] = f'Джуманджи | Компания | {self.object.name}'
         return context
+
+
+def custom_handler500(request):
+    return HttpResponseServerError('Ошибка сервера!')
