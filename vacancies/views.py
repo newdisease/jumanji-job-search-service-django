@@ -11,16 +11,22 @@ class MainView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(MainView, self).get_context_data(**kwargs)
-        context['specialties'] = Specialty.objects.annotate(count=Count('vacancies'))
-        context['companies'] = Company.objects.annotate(count=Count('vacancies'))
+        context['specialties'] = Specialty.objects.annotate(
+            count=Count('vacancies')
+        )
+        context['companies'] = Company.objects.annotate(
+            count=Count('vacancies')
+        )
         context['head_title'] = 'Джуманджи'
         return context
 
 
 class VacanciesListView(ListView):
     template_name = 'vacancies/vacancies.html'
-    model = Vacancy
     context_object_name = 'vacancies'
+
+    def get_queryset(self):
+        return Vacancy.objects.all().select_related('company')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(VacanciesListView, self).get_context_data(**kwargs)
@@ -34,12 +40,13 @@ class SelectedVacanciesListView(ListView):
     context_object_name = 'vacancies'
 
     def get_queryset(self):
-        self.specialty_id = get_object_or_404(Specialty, code=self.args[0])
-        return Vacancy.objects.filter(specialty_id=self.specialty_id.id)
+        self.specialty = get_object_or_404(Specialty, code=self.args[0])
+        return Vacancy.objects.filter(specialty_id=self.specialty.id).select_related('company')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(SelectedVacanciesListView, self).get_context_data(**kwargs)
-        context['page_title'] = self.specialty_id.title
+        context['head_title'] = f'Джуманджи | Вакансии | {self.specialty}'
+        context['page_title'] = self.specialty
         return context
 
 
@@ -50,13 +57,11 @@ class VacancyDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(VacancyDetailView, self).get_context_data(**kwargs)
-        context['specialties_code'] = Specialty.objects.get(id=self.object.specialty_id).code
         context['head_title'] = f'Джуманджи | Вакансия | {self.object.title}'
         return context
 
 
 class CompanyDetailView(DetailView):
-    model = Company
     template_name = 'vacancies/company.html'
     context_object_name = 'company'
     queryset = Company.objects.annotate(count=Count('vacancies'))
