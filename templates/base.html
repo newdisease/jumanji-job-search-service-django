@@ -19,15 +19,24 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-            <ul class="navbar-nav col-10">
+            <ul class="navbar-nav col-6">
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'vacancies_view'  %}">Вакансии</a>
                 </li>
             </ul>
-            <ul class="navbar-nav col-2 justify-content-end">
-                <li class="nav-item active">
-                    <a href="#" class="nav-link font-weight-bold">Вход</a>
-                </li>
+            <ul class="navbar-nav col-6 justify-content-end">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                        <a href="#" class="nav-link font-weight-bold">{{ user.username }}</a>
+                        </li>
+                        <li class="nav-item">
+                        <a href="{% url 'logout' %}" class="nav-link">Выйти</a>
+                        </li>
+                    {% else %}
+                         <li class="nav-item">
+                        <a href="{% url 'login_page' %}" class="nav-link font-weight-bold">Вход</a>
+                        </li>
+                    {% endif %}
             </ul>
         </div>
     </nav>
