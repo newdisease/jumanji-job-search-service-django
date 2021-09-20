@@ -7,7 +7,7 @@ from vacancies.models import Specialty, Company, Vacancy
 
 
 class MainView(TemplateView):
-    template_name = 'vacancies/index.html'
+    template_name = 'index.html'
 
     def get_context_data(self, **kwargs):
         context = super(MainView, self).get_context_data(**kwargs)
@@ -71,6 +71,10 @@ class CompanyDetailView(DetailView):
         context['available_vacancies'] = Vacancy.objects.filter(company=self.object).select_related('company')
         context['head_title'] = f'Джуманджи | Компания | {self.object.name}'
         return context
+
+
+class MyCompany(TemplateView):
+    template_name = 'vacancies/company-edit.html'
 
 
 def custom_handler500(request):
