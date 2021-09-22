@@ -1,8 +1,10 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count
+
 from django.views.generic import DetailView, ListView, UpdateView, CreateView, TemplateView
 
 from vacancies.forms import MyCompanyForm
+from vacancies.mixins import IsNotCompanyMixin, IsCompanyMixin
 from vacancies.models import Company, Vacancy
 
 
@@ -18,23 +20,27 @@ class CompanyDetailView(DetailView):
         return context
 
 
-class NoCompany(LoginRequiredMixin, TemplateView):
+class NoCompany(LoginRequiredMixin, IsCompanyMixin, TemplateView):
     template_name = 'vacancies/companies/company-create.html'
 
 
-class NewCompanyCreate(LoginRequiredMixin, CreateView):
+class NewCompanyCreate(LoginRequiredMixin, IsCompanyMixin, CreateView):
     model = Company
     template_name = 'vacancies/companies/company-edit.html'
     form_class = MyCompanyForm
+    login_url = 'login_page'
+    success_url = '/mycompany/'
 
-    def get_object(self):
-        return self.model.objects.get(owner_id=self.request.user.pk)
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
 
 
-class MyCompany(LoginRequiredMixin, UpdateView):
+class MyCompany(LoginRequiredMixin, IsNotCompanyMixin, UpdateView):
     model = Company
     template_name = 'vacancies/companies/company-edit.html'
     form_class = MyCompanyForm
+    login_url = 'login_page'
 
     def get_object(self):
         return self.model.objects.get(owner_id=self.request.user.pk)
@@ -43,6 +49,7 @@ class MyCompany(LoginRequiredMixin, UpdateView):
 class MyCompanyVacancies(LoginRequiredMixin, ListView):
     template_name = 'vacancies/vacancy-list.html'
     context_object_name = 'my_company_vacancies'
+    login_url = 'login_page'
 
     def get_queryset(self):
         username = self.request.user.username
