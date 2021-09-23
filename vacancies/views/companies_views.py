@@ -1,9 +1,8 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count
-
 from django.views.generic import DetailView, ListView, UpdateView, CreateView, TemplateView
 
-from vacancies.forms import MyCompanyForm
+from vacancies.forms import MyCompanyForm, MyCompanyVacancyForm
 from vacancies.mixins import IsNotCompanyMixin, IsCompanyMixin
 from vacancies.models import Company, Vacancy
 
@@ -20,11 +19,11 @@ class CompanyDetailView(DetailView):
         return context
 
 
-class NoCompany(LoginRequiredMixin, IsCompanyMixin, TemplateView):
+class NoCompanyView(LoginRequiredMixin, IsCompanyMixin, TemplateView):
     template_name = 'vacancies/companies/company-create.html'
 
 
-class NewCompanyCreate(LoginRequiredMixin, IsCompanyMixin, CreateView):
+class NewCompanyCreateView(LoginRequiredMixin, IsCompanyMixin, CreateView):
     model = Company
     template_name = 'vacancies/companies/company-edit.html'
     form_class = MyCompanyForm
@@ -36,7 +35,7 @@ class NewCompanyCreate(LoginRequiredMixin, IsCompanyMixin, CreateView):
         return super().form_valid(form)
 
 
-class MyCompany(LoginRequiredMixin, IsNotCompanyMixin, UpdateView):
+class MyCompanyView(LoginRequiredMixin, IsNotCompanyMixin, UpdateView):
     model = Company
     template_name = 'vacancies/companies/company-edit.html'
     form_class = MyCompanyForm
@@ -45,8 +44,13 @@ class MyCompany(LoginRequiredMixin, IsNotCompanyMixin, UpdateView):
     def get_object(self):
         return self.model.objects.get(owner_id=self.request.user.pk)
 
+    def get_context_data(self, **kwargs):
+        context = super(MyCompanyView, self).get_context_data()
+        context['head_title'] = 'Джуманджи | Моя компания'
+        return context
 
-class MyCompanyVacancies(LoginRequiredMixin, ListView):
+
+class MyCompanyVacanciesView(LoginRequiredMixin, ListView):
     template_name = 'vacancies/vacancy-list.html'
     context_object_name = 'my_company_vacancies'
     login_url = 'login_page'
@@ -56,16 +60,22 @@ class MyCompanyVacancies(LoginRequiredMixin, ListView):
         return Vacancy.objects.filter(company__owner__username=username)
 
     def get_context_data(self, *, object_list=None, **kwargs):
-        context = super(MyCompanyVacancies, self).get_context_data()
+        context = super(MyCompanyVacanciesView, self).get_context_data()
         context['head_title'] = 'Джуманджи | Мои вакансии'
         context['page_title'] = 'Все мои вакансии'
         return context
 
-# class MyCompanyVacancy(View):
-#     vacancy = get_object_or_404(Vacancy, pk=1)
-#     vacancy_form = MyCompanyVacancyForm(request.POST)
-#     if vacancy_form.is_valid():
-#         vacancy = vacancy_form.save(commit=False)
-#         vacancy.title = vacancy.title
-#         vacancy.company = vacancy.company
-#         vacancy.save()
+
+class MyCompanyVacancyView(UpdateView):
+    template_name = 'vacancies/vacancy-edit.html'
+    form_class = MyCompanyVacancyForm
+    login_url = 'login_page'
+
+    def get_queryset(self):
+        username = self.request.user.username
+        return Vacancy.objects.filter(company__owner__username=username)
+
+    def get_context_data(self, **kwargs):
+        context = super(MyCompanyVacancyView, self).get_context_data()
+        context['head_title'] = f'Джуманджи | Вакансия | {self.object.title}'
+        return context

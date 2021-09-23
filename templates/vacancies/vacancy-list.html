@@ -33,12 +33,12 @@
                                                    class="mb-1">{{ vacancy.title }}</a>
                                                 <p class="mb-1">
                                                     <span class="mr-4">до {{ vacancy.salary_max|intcomma }} р.</span><a
-                                                        href="#" class="text-info">3
+                                                        href="{% url 'my_company_vacancy' vacancy.id %}" class="text-info">3
                                                     отклика</a>
                                                 </p>
                                             </div>
                                             <div class="col-6 col-lg-4 text-right">
-                                                <a href="#" class="btn btn-outline-info">Изменить</a>
+                                                <a href="{% url 'my_company_vacancy' vacancy.id %}" class="btn btn-outline-info">Изменить</a>
                                             </div>
                                         </div>
                                     </div>

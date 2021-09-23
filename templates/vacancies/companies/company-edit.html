@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
-
 {% block content %}
     <style>
         body {
@@ -29,7 +28,7 @@
                             <p class="alert alert-info" role="alert">
                                 Информация о компании обновлена
                             </p>
-                            {% crispy form %}
+                            {% crispy form|safe %}
                         </section>
                         <!-- END Tab -->
                     </div>

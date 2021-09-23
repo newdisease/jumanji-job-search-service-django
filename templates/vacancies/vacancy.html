@@ -20,7 +20,7 @@
                     <p class="text-muted mb-4">{{ vacancy.company.name }} ({{ vacancy.company.employee_count }} сотрудников),
                         {{ vacancy.company.location }}</p>
                     <div style="line-height: 1.8;">
-                        {{ vacancy.description|safe }}
+                        {{ vacancy.description }}
                     </div>
                     <form action="/echo" class="card mt-4 mb-3" enctype="multipart/form-data">
                         <div class="card-body mx-3">
