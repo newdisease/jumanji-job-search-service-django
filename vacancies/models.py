@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.http import HttpResponseRedirect
 from django.urls import reverse
 
 from config.settings import MEDIA_COMPANY_IMAGE_DIR, MEDIA_SPECIALITY_IMAGE_DIR

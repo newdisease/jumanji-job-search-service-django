@@ -145,3 +145,5 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
