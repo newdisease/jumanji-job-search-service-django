@@ -6,6 +6,7 @@ from django.views.generic import TemplateView, ListView, DetailView
 from django.views.generic.edit import FormMixin
 
 from vacancies.forms import ApplicationForm
+from vacancies.mixins import IsSendApplicationMixin
 from vacancies.models import Specialty, Company, Vacancy
 
 
@@ -81,7 +82,7 @@ class VacancyDetailView(FormMixin, DetailView):
         return reverse('vacancy_response_send', args=(self.object.pk,))
 
 
-class VacancyResponseView(DetailView):
+class VacancyResponseView(IsSendApplicationMixin, DetailView):
     template_name = 'vacancies/resume/sent.html'
     model = Vacancy
 

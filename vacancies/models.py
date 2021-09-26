@@ -55,7 +55,7 @@ class Vacancy(models.Model):
     description = models.TextField()
     salary_min = models.IntegerField()
     salary_max = models.IntegerField()
-    published_at = models.DateField()
+    published_at = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return self.title

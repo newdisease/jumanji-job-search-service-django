@@ -6,7 +6,7 @@ from django.views.generic import DetailView, ListView, UpdateView, CreateView, T
 
 from vacancies.forms import MyCompanyForm, MyCompanyVacancyForm
 from vacancies.mixins import IsNotCompanyMixin, IsCompanyMixin
-from vacancies.models import Company, Vacancy
+from vacancies.models import Company, Vacancy, Application
 
 
 class CompanyDetailView(DetailView):
@@ -59,12 +59,32 @@ class MyCompanyVacanciesView(LoginRequiredMixin, IsNotCompanyMixin, ListView):
 
     def get_queryset(self):
         username = self.request.user.username
-        return Vacancy.objects.filter(company__owner__username=username)
+        return Vacancy.objects.filter(company__owner__username=username).annotate(num_responses=Count('applications'))
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(MyCompanyVacanciesView, self).get_context_data()
         context['head_title'] = 'Джуманджи | Мои вакансии'
         context['page_title'] = 'Все мои вакансии'
+        return context
+
+
+class MyNewVacancyView(LoginRequiredMixin, IsNotCompanyMixin, SuccessMessageMixin, CreateView):
+    model = Vacancy
+    template_name = 'vacancies/vacancy-edit.html'
+    form_class = MyCompanyVacancyForm
+    login_url = 'login_page'
+    success_message = "Вакансия создана"
+
+    def form_valid(self, form):
+        form.instance.company_id = Company.objects.get(owner_id=self.request.user).id
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('my_company_vacancy', args=(self.object.pk,))
+
+    def get_context_data(self, **kwargs):
+        context = super(MyNewVacancyView, self).get_context_data()
+        context['head_title'] = 'Новая вакансия | Джуманджи'
         return context
 
 
@@ -80,7 +100,8 @@ class MyCompanyVacancyView(LoginRequiredMixin, IsNotCompanyMixin, SuccessMessage
 
     def get_context_data(self, **kwargs):
         context = super(MyCompanyVacancyView, self).get_context_data()
-        context['head_title'] = f'Джуманджи | Вакансия | {self.object.title}'
+        context['responses'] = Application.objects.filter(vacancy_id=self.object.pk)
+        context['head_title'] = f'{self.object.title} | Вакансия | Джуманджи'
         return context
 
     def get_success_url(self):
