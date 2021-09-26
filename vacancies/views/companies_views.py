@@ -10,19 +10,19 @@ from vacancies.models import Company, Vacancy, Application
 
 
 class CompanyDetailView(DetailView):
-    template_name = 'vacancies/companies/company.html'
+    template_name = 'vacancies/company/company.html'
     context_object_name = 'company'
     queryset = Company.objects.annotate(count=Count('vacancies'))
 
     def get_context_data(self, **kwargs):
         context = super(CompanyDetailView, self).get_context_data(**kwargs)
         context['available_vacancies'] = Vacancy.objects.filter(company=self.object).select_related('company')
-        context['head_title'] = f'Джуманджи | Компания | {self.object.name}'
+        context['head_title'] = f'{self.object.name} | Компания | Джуманджи'
         return context
 
 
 class NoCompanyView(LoginRequiredMixin, IsCompanyMixin, TemplateView):
-    template_name = 'vacancies/companies/company-create.html'
+    template_name = 'vacancies/company/company-create.html'
 
     def get_context_data(self, **kwargs):
         context = super(NoCompanyView, self).get_context_data()
@@ -32,7 +32,7 @@ class NoCompanyView(LoginRequiredMixin, IsCompanyMixin, TemplateView):
 
 class NewCompanyCreateView(LoginRequiredMixin, IsCompanyMixin, SuccessMessageMixin, CreateView):
     model = Company
-    template_name = 'vacancies/companies/company-edit.html'
+    template_name = 'vacancies/company/company-edit.html'
     form_class = MyCompanyForm
     success_message = 'Компания добавлена'
 
@@ -44,7 +44,7 @@ class NewCompanyCreateView(LoginRequiredMixin, IsCompanyMixin, SuccessMessageMix
 
 class MyCompanyView(LoginRequiredMixin, IsNotCompanyMixin, SuccessMessageMixin, UpdateView):
     model = Company
-    template_name = 'vacancies/companies/company-edit.html'
+    template_name = 'vacancies/company/company-edit.html'
     form_class = MyCompanyForm
     login_url = 'login_page'
     success_message = 'Информация о компании обновлена'
@@ -59,7 +59,7 @@ class MyCompanyView(LoginRequiredMixin, IsNotCompanyMixin, SuccessMessageMixin, 
 
 
 class MyCompanyVacanciesView(LoginRequiredMixin, IsNotCompanyMixin, ListView):
-    template_name = 'vacancies/vacancy-list.html'
+    template_name = 'vacancies/vacancy/vacancy-list.html'
     context_object_name = 'my_company_vacancies'
     login_url = 'login_page'
 
@@ -76,10 +76,10 @@ class MyCompanyVacanciesView(LoginRequiredMixin, IsNotCompanyMixin, ListView):
 
 class MyNewVacancyView(LoginRequiredMixin, IsNotCompanyMixin, SuccessMessageMixin, CreateView):
     model = Vacancy
-    template_name = 'vacancies/vacancy-edit.html'
+    template_name = 'vacancies/vacancy/vacancy-edit.html'
     form_class = MyCompanyVacancyForm
     login_url = 'login_page'
-    success_message = "Вакансия создана"
+    success_message = 'Вакансия создана'
 
     def form_valid(self, form):
         form.instance.company_id = Company.objects.get(owner_id=self.request.user).id
@@ -96,10 +96,10 @@ class MyNewVacancyView(LoginRequiredMixin, IsNotCompanyMixin, SuccessMessageMixi
 
 
 class MyCompanyVacancyView(LoginRequiredMixin, IsNotCompanyMixin, SuccessMessageMixin, UpdateView):
-    template_name = 'vacancies/vacancy-edit.html'
+    template_name = 'vacancies/vacancy/vacancy-edit.html'
     form_class = MyCompanyVacancyForm
     login_url = 'login_page'
-    success_message = "Вакансия обновлена"
+    success_message = 'Вакансия обновлена'
 
     def get_queryset(self):
         username = self.request.user.username

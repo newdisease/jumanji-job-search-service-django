@@ -1,4 +1,3 @@
-from django.contrib.auth.models import AnonymousUser
 from django.shortcuts import redirect
 
 from vacancies.models import Company, Application, Resume

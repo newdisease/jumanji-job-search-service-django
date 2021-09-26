@@ -26,7 +26,7 @@ class MainView(TemplateView):
 
 
 class VacanciesListView(ListView):
-    template_name = 'vacancies/vacancies.html'
+    template_name = 'vacancies/vacancy/vacancies.html'
     context_object_name = 'vacancies'
 
     def get_queryset(self):
@@ -40,7 +40,7 @@ class VacanciesListView(ListView):
 
 
 class SelectedVacanciesListView(ListView):
-    template_name = 'vacancies/vacancies.html'
+    template_name = 'vacancies/vacancy/vacancies.html'
     context_object_name = 'vacancies'
 
     def get_queryset(self):
@@ -49,14 +49,14 @@ class SelectedVacanciesListView(ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(SelectedVacanciesListView, self).get_context_data(**kwargs)
-        context['head_title'] = f'{self.specialty} | Джуманджи | Вакансии'
+        context['head_title'] = f'{self.specialty} | Вакансии | Джуманджи'
         context['page_title'] = self.specialty
         return context
 
 
 class VacancyDetailView(FormMixin, DetailView):
     model = Vacancy
-    template_name = 'vacancies/vacancy.html'
+    template_name = 'vacancies/vacancy/vacancy.html'
     context_object_name = 'vacancy'
     form_class = ApplicationForm
 
@@ -82,7 +82,7 @@ class VacancyDetailView(FormMixin, DetailView):
 
 
 class VacancyResponseView(IsSendApplicationMixin, DetailView):
-    template_name = 'vacancies/resume/sent.html'
+    template_name = 'vacancies/sent.html'
     model = Vacancy
 
     def get_context_data(self, **kwargs):

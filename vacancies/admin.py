@@ -24,6 +24,7 @@ class Vacancies(admin.ModelAdmin):
         'published_at',
     )
 
+
 class Resumes(admin.ModelAdmin):
     list_display = (
         'user',

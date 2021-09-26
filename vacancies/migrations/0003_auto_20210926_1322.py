@@ -24,14 +24,34 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=30)),
                 ('surname', models.CharField(max_length=30)),
-                ('status', models.CharField(choices=[('Не ищу работу', 'Not Looking For'), ('Рассматриваю предложения', 'Check'), ('Ищу работу', 'Looking For')], default='Рассматриваю предложения', max_length=24)),
+                ('status', models.CharField(
+                    choices=[
+                        ('Не ищу работу', 'Not Looking For'),
+                        ('Рассматриваю предложения', 'Check'),
+                        ('Ищу работу', 'Looking For')
+                    ],
+                    default='Рассматриваю предложения',
+                    max_length=24)),
                 ('salary', models.IntegerField()),
-                ('grade', models.CharField(choices=[('Стажер', 'Trainee'), ('Джуниор', 'Junior'), ('Миддл', 'Middle'), ('Синьор', 'Senior'), ('Лид', 'Lead')], default='Джуниор', max_length=10)),
+                ('grade', models.CharField(
+                    choices=[
+                        ('Стажер', 'Trainee'),
+                        ('Джуниор', 'Junior'),
+                        ('Миддл', 'Middle'),
+                        ('Синьор', 'Senior'),
+                        ('Лид', 'Lead')],
+                    default='Джуниор',
+                    max_length=10)),
                 ('education', models.TextField()),
                 ('experience', models.TextField()),
                 ('portfolio', models.URLField()),
-                ('specialty', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='resume', to='vacancies.specialty')),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('specialty', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE,
+                    related_name='resume',
+                    to='vacancies.specialty')),
+                ('user', models.OneToOneField(
+                    on_delete=django.db.models.deletion.CASCADE,
+                    to=settings.AUTH_USER_MODEL)),
             ],
         ),
     ]
