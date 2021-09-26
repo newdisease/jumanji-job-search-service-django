@@ -60,7 +60,6 @@ class VacancyDetailView(FormMixin, DetailView):
     context_object_name = 'vacancy'
     form_class = ApplicationForm
 
-
     def get_context_data(self, **kwargs):
         context = super(VacancyDetailView, self).get_context_data(**kwargs)
         context['head_title'] = f'{self.object.title} | Вакансия | Джуманджи'

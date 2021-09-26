@@ -7,10 +7,6 @@ from tinymce.widgets import TinyMCE
 from vacancies.models import Vacancy, Company, Application, Resume
 
 
-class CustomImagefield(Field):
-    template = 'custom_imagefield.html'
-
-
 class MyCompanyVacancyForm(forms.ModelForm):
     description = forms.CharField(widget=TinyMCE(attrs={'cols': 80, 'rows': 30}))
 
@@ -69,7 +65,7 @@ class MyCompanyForm(forms.ModelForm):
         self.helper.layout = Layout(
             Row(
                 Column('name'),
-                Column(CustomImagefield('logo')),
+                Column('logo'),
             ),
             Row(
                 Column('location'),
