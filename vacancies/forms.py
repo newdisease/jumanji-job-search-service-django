@@ -4,7 +4,7 @@ from crispy_forms.layout import Submit, Layout, Row, Column, Field
 from django import forms
 from tinymce.widgets import TinyMCE
 
-from vacancies.models import Vacancy, Company, Application
+from vacancies.models import Vacancy, Company, Application, Resume
 
 
 class CustomImagefield(Field):
@@ -101,5 +101,46 @@ class ApplicationForm(forms.ModelForm):
             'written_cover_letter',
             FormActions(
                 Submit('submit', 'Отправить заявку'),
+            ),
+        )
+
+
+class MyResumeForm(forms.ModelForm):
+    class Meta:
+        model = Resume
+        fields = [
+            'name',
+            'surname',
+            'status',
+            'salary',
+            'specialty',
+            'grade',
+            'education',
+            'experience',
+            'portfolio',
+        ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.layout = Layout(
+            Row(
+                Column('name'),
+                Column('surname'),
+            ),
+            Row(
+                Column('status'),
+                Column('salary'),
+            ),
+            Row(
+                Column('specialty'),
+                Column('grade'),
+            ),
+            'education',
+            'experience',
+            'portfolio',
+            FormActions(
+                Submit('submit', 'Сохранить'),
             ),
         )

@@ -1,6 +1,5 @@
 from django.contrib.auth.models import User
 from django.db import models
-from django.http import HttpResponseRedirect
 from django.urls import reverse
 
 from config.settings import MEDIA_COMPANY_IMAGE_DIR, MEDIA_SPECIALITY_IMAGE_DIR
@@ -15,7 +14,7 @@ class Company(models.Model):
     )
     description = models.TextField()
     employee_count = models.IntegerField()
-    owner = models.ForeignKey(
+    owner = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
     )
@@ -78,3 +77,46 @@ class Application(models.Model):
 
     def __str__(self):
         return self.written_username
+
+
+class Resume(models.Model):
+    class Status(models.TextChoices):
+        NOT_LOOKING_FOR = 'Не ищу работу'
+        CHECK = 'Рассматриваю предложения'
+        LOOKING_FOR = 'Ищу работу'
+
+    class Grade(models.TextChoices):
+        TRAINEE = 'Стажер'
+        JUNIOR = 'Джуниор'
+        MIDDLE = 'Миддл'
+        SENIOR = 'Синьор'
+        LEAD = 'Лид'
+
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+    )
+    name = models.CharField(max_length=30)
+    surname = models.CharField(max_length=30)
+    status = models.CharField(
+        max_length=24,
+        choices=Status.choices,
+        default=Status.CHECK
+    )
+    salary = models.IntegerField()
+    specialty = models.ForeignKey(
+        Specialty,
+        on_delete=models.CASCADE,
+        related_name='resume'
+    )
+    grade = models.CharField(
+        max_length=10,
+        choices=Grade.choices,
+        default=Grade.JUNIOR
+    )
+    education = models.TextField()
+    experience = models.TextField()
+    portfolio = models.URLField()
+
+    def __str__(self):
+        return f'{self.name} {self.surname}'

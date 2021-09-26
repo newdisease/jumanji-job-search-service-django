@@ -24,6 +24,11 @@ class CompanyDetailView(DetailView):
 class NoCompanyView(LoginRequiredMixin, IsCompanyMixin, TemplateView):
     template_name = 'vacancies/companies/company-create.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(NoCompanyView, self).get_context_data()
+        context['head_title'] = 'Нет компании | Джуманджи'
+        return context
+
 
 class NewCompanyCreateView(LoginRequiredMixin, IsCompanyMixin, SuccessMessageMixin, CreateView):
     model = Company
@@ -33,7 +38,8 @@ class NewCompanyCreateView(LoginRequiredMixin, IsCompanyMixin, SuccessMessageMix
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
-        return super().form_valid(form)
+        if form.is_valid():
+            return super().form_valid(form)
 
 
 class MyCompanyView(LoginRequiredMixin, IsNotCompanyMixin, SuccessMessageMixin, UpdateView):
@@ -48,7 +54,7 @@ class MyCompanyView(LoginRequiredMixin, IsNotCompanyMixin, SuccessMessageMixin, 
 
     def get_context_data(self, **kwargs):
         context = super(MyCompanyView, self).get_context_data()
-        context['head_title'] = 'Джуманджи | Моя компания'
+        context['head_title'] = 'Моя компания | Джуманджи'
         return context
 
 
@@ -63,7 +69,7 @@ class MyCompanyVacanciesView(LoginRequiredMixin, IsNotCompanyMixin, ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(MyCompanyVacanciesView, self).get_context_data()
-        context['head_title'] = 'Джуманджи | Мои вакансии'
+        context['head_title'] = 'Мои вакансии | Джуманджи '
         context['page_title'] = 'Все мои вакансии'
         return context
 
@@ -77,7 +83,8 @@ class MyNewVacancyView(LoginRequiredMixin, IsNotCompanyMixin, SuccessMessageMixi
 
     def form_valid(self, form):
         form.instance.company_id = Company.objects.get(owner_id=self.request.user).id
-        return super().form_valid(form)
+        if form.is_valid():
+            return super().form_valid(form)
 
     def get_success_url(self):
         return reverse_lazy('my_company_vacancy', args=(self.object.pk,))
