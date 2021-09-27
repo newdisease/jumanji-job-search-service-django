@@ -1,4 +1,4 @@
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.http import HttpResponseServerError
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
@@ -90,6 +90,18 @@ class VacancyResponseView(IsSendApplicationMixin, DetailView):
         context['head_title'] = 'Отклик отправлен | Джуманджи'
         context['vacancy_id'] = self.object
         return context
+
+
+class SearchListView(ListView):
+    template_name = 'search.html'
+    context_object_name = 'vacancies'
+
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        object_list = Vacancy.objects.filter(
+            Q(title__icontains=query) | Q(description__icontains=query)
+        ).select_related('company')
+        return object_list
 
 
 def custom_handler500(request):

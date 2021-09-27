@@ -2,7 +2,7 @@ from django.urls import path, re_path
 
 from .views import MainView, VacanciesListView, SelectedVacanciesListView, VacancyDetailView, CompanyDetailView, \
     MyCompanyView, MyCompanyVacanciesView, NewCompanyCreateView, NoCompanyView, MyCompanyVacancyView, \
-    VacancyResponseView, MyNewVacancyView
+    VacancyResponseView, MyNewVacancyView, SearchListView
 from .views.resume_views import MyResumeView, NoResumeView, NewResumeCreateView
 
 urlpatterns = [
@@ -24,5 +24,6 @@ urlpatterns = [
     path('myresume/', MyResumeView.as_view(), name='my_resume'),
     path('myresume/letsstart/', NoResumeView.as_view(), name='no_resume'),
     path('myresume/create/', NewResumeCreateView.as_view(), name='my_new_resume'),
-
+    # поиск
+    path('search/', SearchListView.as_view(), name='search')
 ]
