@@ -1,6 +1,6 @@
-# Jumannji: Job Search Service
+# Jumanji: Job Search Service
 
-[Here](https://jumanji-worksearch.herokuapp.com) you can find the ware-frames for the project. Just type admin as login and password for checking personal account
+[Here](https://jumanji-worksearch.herokuapp.com) you can find the ware-frames for the project. Just type *admin* as login and password for checking personal account
 
 
 ### Start project
